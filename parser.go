@@ -108,7 +108,11 @@ func (s *state) outputs() []*Output {
 			case string:
 				o, _ = NewOutput(k, v)
 			default:
-				o, _ = NewOutput(k, "<error>")
+				continue
+			}
+
+			if strings.Contains(fmt.Sprint(o.value), "error") {
+				continue
 			}
 
 			inst = append(inst, o)
@@ -128,7 +132,7 @@ func (s *stateTerraform0dot12) outputs() []*Output {
 		case map[string]interface{}:
 			o, _ = NewOutput(k, v["value"])
 		default: // not expected
-			o, _ = NewOutput(k, "<error>")
+			continue
 		}
 
 		inst = append(inst, o)
@@ -281,7 +285,7 @@ func encodeTerraform0Dot12ValuesAsAttributes(rawValues *map[string]interface{}) 
 				if str, typeOk := vv.(string); typeOk {
 					ret[k+"."+kk] = str
 				} else {
-					ret[k+"."+kk] = "<error>"
+					continue
 				}
 			}
 		case []interface{}:
@@ -295,17 +299,17 @@ func encodeTerraform0Dot12ValuesAsAttributes(rawValues *map[string]interface{}) 
 						if str, typeOk := vvv.(string); typeOk {
 							ret[k+"."+strconv.Itoa(kk)+"."+kkk] = str
 						} else {
-							ret[k+"."+strconv.Itoa(kk)+"."+kkk] = "<error>"
+							continue
 						}
 					}
 				default:
-					ret[k+"."+strconv.Itoa(kk)] = "<error>"
+					continue
 				}
 			}
 		case string:
 			ret[k] = v
 		default:
-			ret[k] = "<error>"
+			continue
 		}
 	}
 	return ret
