@@ -2,3 +2,5 @@
 /pkg/*.zip
 /terraform-inventory
 .idea
+
+state.json
